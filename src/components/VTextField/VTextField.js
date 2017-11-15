@@ -186,6 +186,17 @@ export default {
 
       this.backspace = key === 'Backspace'
       this.delete = key === 'Delete'
+
+      // Prevents closing of a
+      // dialog when pressing
+      // enter
+      if (this.multiLine &&
+        this.isFocused &&
+        e.keyCode === 13
+      ) {
+        e.stopPropagation()
+      }
+
       this.internalChange = true
     },
     genCounter () {
