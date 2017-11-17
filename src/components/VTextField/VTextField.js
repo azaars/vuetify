@@ -119,8 +119,7 @@ export default {
       }
     },
     value (val) {
-      if (this.internalChange) this.internalChange = false
-      else if (this.mask) {
+      if (this.mask && !this.internalChange) {
         const masked = this.maskText(this.unmaskText(val))
         this.lazyValue = this.unmaskText(masked)
 
@@ -130,6 +129,8 @@ export default {
           this.$emit('input', this.lazyValue)
         })
       } else this.lazyValue = val
+
+      if (this.internalChange) this.internalChange = false
 
       !this.validateOnBlur && this.validate()
       this.shouldAutoGrow && this.calculateInputHeight()
