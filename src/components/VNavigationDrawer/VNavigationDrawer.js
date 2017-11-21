@@ -1,9 +1,11 @@
 require('../../stylus/components/_navigation-drawer.styl')
 
+// Mixins
 import Applicationable from '../../mixins/applicationable'
 import Overlayable from '../../mixins/overlayable'
 import Themeable from '../../mixins/themeable'
 
+// Directives
 import ClickOutside from '../../directives/click-outside'
 import Resize from '../../directives/resize'
 import Touch from '../../directives/touch'
@@ -11,7 +13,11 @@ import Touch from '../../directives/touch'
 export default {
   name: 'v-navigation-drawer',
 
-  mixins: [Applicationable, Overlayable, Themeable],
+  mixins: [
+    Applicationable,
+    Overlayable,
+    Themeable
+  ],
 
   directives: {
     ClickOutside,
@@ -22,7 +28,6 @@ export default {
   data () {
     return {
       isActive: false,
-      isMobile: null,
       touchArea: {
         left: 0,
         right: 0
@@ -63,6 +68,13 @@ export default {
     calculatedHeight () {
       return this.height || '100%'
     },
+    calculatedTransform () {
+      if (this.isActive) return 0
+
+      return this.right
+        ? this.calculatedWidth
+        : -this.calculatedWidth
+    },
     calculatedWidth () {
       return this.miniVariant
         ? this.miniVariantWidth
@@ -84,6 +96,11 @@ export default {
         'theme--dark': this.dark,
         'theme--light': this.light
       }
+    },
+    isMobile () {
+      return !this.permanent &&
+        !this.temporary &&
+        this.$vuetify.breakpoint.width < parseInt(this.mobileBreakPoint, 10)
     },
     marginTop () {
       if (!this.app) return 0
@@ -130,6 +147,7 @@ export default {
         height: this.calculatedHeight,
         marginTop: `${this.marginTop}px`,
         maxHeight: `calc(100% - ${this.maxHeight}px)`,
+        transform: `translateX(${this.calculatedTransform}px)`,
         width: `${this.calculatedWidth}px`
       }
     }
@@ -164,7 +182,8 @@ export default {
         this.removeOverlay()
 
       if (prev == null ||
-        this.resizeIsDisabled
+        this.resizeIsDisabled ||
+        !this.reactsToMobile
       ) return
 
       this.isActive = !val
@@ -177,9 +196,6 @@ export default {
       // enable the drawer
       if (val) {
         this.isActive = true
-        this.isMobile = false
-      } else {
-        this.checkIfMobile()
       }
       this.updateApplication()
     },
@@ -204,9 +220,7 @@ export default {
     }
   },
 
-  beforeMount () {
-    this.checkIfMobile()
-
+  created () {
     if (this.permanent) {
       this.isActive = true
     } else if (this.stateless ||
@@ -234,27 +248,12 @@ export default {
         right: parentRect.right - 50
       }
     },
-    checkIfMobile () {
-      if (this.permanent ||
-        this.temporary
-      ) return
-
-      this.isMobile = window.innerWidth < parseInt(this.mobileBreakPoint, 10)
-    },
     closeConditional () {
       return this.reactsToClick
     },
     genDirectives () {
       const directives = [
-        { name: 'click-outside', value: this.closeConditional },
-        {
-          name: 'resize',
-          value: {
-            debounce: 200,
-            quiet: true,
-            value: this.onResize
-          }
-        }
+        { name: 'click-outside', value: this.closeConditional }
       ]
 
       !this.touchless && directives.push({
@@ -267,9 +266,6 @@ export default {
       })
 
       return directives
-    },
-    onResize () {
-      this.checkIfMobile()
     },
     swipeRight (e) {
       if (this.isActive && !this.right) return
@@ -324,7 +320,11 @@ export default {
       style: this.styles,
       directives: this.genDirectives(),
       on: {
-        click: () => this.$emit('update:miniVariant', false)
+        click: () => {
+          if (!this.miniVariant) return
+
+          this.$emit('update:miniVariant', false)
+        }
       }
     }
 
