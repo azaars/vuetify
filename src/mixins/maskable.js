@@ -90,7 +90,8 @@ export default {
     },
     unmaskText () {
       if (!this.mask) return text => text
-      return this.isNumeralFormatter ? this.unmaskNumeralText : unmaskText
+      return this.isNumeralFormatter ? this.unmaskNumeralText
+        : this.isCustomFormatter ? text => text : unmaskText
     }
   },
 
@@ -162,7 +163,8 @@ export default {
       this.$nextTick(this.updateRange)
     },
     isMaskDelimiter (char) {
-      return this.isNumeralFormatter ? this.isNumeralDelimiter(char) : isMaskDelimiter(char)
+      return this.isNumeralFormatter ? this.isNumeralDelimiter(char)
+        : this.isCustomFormatter ? false : isMaskDelimiter(char)
     }
   }
 }
