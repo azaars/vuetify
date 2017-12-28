@@ -62,6 +62,7 @@ export default {
     },
     hideActions: Boolean,
     hideHeaders: Boolean,
+    disableInitialSort: Boolean,
     mustSort: Boolean,
     noResultsText: {
       type: String,
@@ -96,11 +97,13 @@ export default {
     },
     customFilter: {
       type: Function,
-      default: (items, search, filter) => {
+      default: (items, search, filter, headers) => {
         search = search.toString().toLowerCase()
-        return items.filter(i => (
-          Object.keys(i).some(j => filter(i[j], search))
-        ))
+        if (search.trim() === '') return items
+
+        const props = headers.map(h => h.value)
+
+        return items.filter(item => props.some(prop => filter(getObjectValueByPath(item, prop), search)))
       }
     },
     customSort: {
@@ -222,7 +225,7 @@ export default {
         this.search !== null
 
       if (hasSearch) {
-        items = this.customFilter(items, this.search, this.filter)
+        items = this.customFilter(items, this.search, this.filter, this.headers)
         this.searchLength = items.length
       }
 
@@ -292,7 +295,7 @@ export default {
       }
     },
     needsTR (row) {
-      return row.length && row.find(c => c.tag === 'td')
+      return row.length && row.find(c => c.tag === 'td' || c.tag === 'th')
     },
     genTR (children, data = {}) {
       return this.$createElement('tr', data, children)
@@ -314,7 +317,7 @@ export default {
       !('sortable' in h) || h.sortable)
     )
 
-    this.defaultPagination.sortBy = firstSortable
+    this.defaultPagination.sortBy = !this.disableInitialSort && firstSortable
       ? firstSortable.value
       : null
 
@@ -337,7 +340,6 @@ export default {
         'class': this.classes
       }, [
         this.genTHead(),
-        this.genTProgress(),
         this.genTBody(),
         this.genTFoot()
       ])

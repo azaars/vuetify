@@ -6,15 +6,15 @@
 picker($material)
   color: $material.text.primary
 
-  .btn
-    color: $material.text.primary
-
   .picker__body
     background: $material.picker.body
 
+
+picker-title($material)
   .picker__title
     background: $material.picker.title
 
+dark(picker-title, 'picker')
 theme(picker, "picker")
 
 .picker
@@ -22,6 +22,7 @@ theme(picker, "picker")
   display: flex
   flex-direction: column
   width: 290px
+  contain: content
 
   .card__row--actions
     border: none

@@ -3,6 +3,13 @@ require('../../stylus/components/_content.styl')
 export default {
   name: 'v-content',
 
+  props: {
+    tag: {
+      type: String,
+      default: 'main'
+    }
+  },
+
   computed: {
     styles () {
       const {
@@ -18,12 +25,24 @@ export default {
     }
   },
 
+  mounted () {
+    // TODO: Deprecate
+    if (this.$el.parentElement.tagName === 'MAIN') {
+      console.warn('v-content no longer needs to be wrapped in a <main> tag', this.$el.parentElement)
+    }
+  },
+
   render (h) {
     const data = {
       staticClass: 'content',
-      style: this.styles
+      style: this.styles,
+      ref: 'content'
     }
 
-    return h('div', data, this.$slots.default)
+    return h('div', {
+      staticClass: 'content--wrap'
+    }, [
+      h(this.tag, data, this.$slots.default)
+    ])
   }
 }

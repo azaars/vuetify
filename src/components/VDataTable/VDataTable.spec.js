@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { test } from '~util/testing'
 import { mount } from 'avoriaz'
 import VDataTable from './VDataTable'
@@ -24,6 +25,21 @@ test('VDataTable.vue', () => {
     }
   }
 
+  function dataTableTestDataFilter () {
+    return {
+      propsData: {
+        headers: [
+          { text: 'First Column', value: 'first' },
+          { text: 'Second Column', value: 'second.first' },
+          { text: 'Third Column', value: 'third.first.second' }
+        ],
+        items: [
+          { other: 1, first: 'foo', second: { first: 'bar' }, third: { first: { second: 'baz', third: 'outside' } }, fourth: 'outside' }
+        ]
+      }
+    }
+  }
+
   // TODO: This doesn't actually test anything
   it.skip('should be able to filter null and undefined values', async () => {
     const data = dataTableTestData()
@@ -44,20 +60,50 @@ test('VDataTable.vue', () => {
     expect('Application is missing <v-app> component.').toHaveBeenTipped()
   })
 
+  it('should match a snapshot with single rows-per-page-items', () => {
+    const data = dataTableTestData()
+    data.propsData.rowsPerPageItems = [1]
+    const wrapper = mount(VDataTable, data)
+
+    expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  it('should match display no-data-text when no data', () => {
+    const data = dataTableTestData()
+    data.propsData.items = []
+    data.propsData.noDataText = 'foo'
+    const wrapper = mount(VDataTable, data)
+
+    expect(wrapper.find('tbody td')[0].html()).toMatchSnapshot()
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
+  it('should match display no-results-text when no results', () => {
+    const data = dataTableTestData()
+    data.propsData.noResultsText = 'bar'
+    data.propsData.search = "no such item"
+    const wrapper = mount(VDataTable, data)
+
+    expect(wrapper.find('tbody td')[0].html()).toMatchSnapshot()
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
   it('should render aria-sort attribute on column headers', async () => {
     const data = dataTableTestData()
     const wrapper = mount(VDataTable, data)
 
-    let headers = wrapper.find('thead:first-of-type > tr:first-of-type > th')
+    const headers = wrapper.find('thead:first-of-type > tr:first-of-type > th')
 
     expect(
       headers.map(h => h.getAttribute('aria-sort'))
     ).toEqual(['ascending', 'none', 'none'])
 
-    wrapper.setProps({ pagination: {
-      sortBy: 'col3',
-      descending: false
-    }})
+    wrapper.setProps({
+      pagination: {
+        sortBy: 'col3',
+        descending: false
+      }
+    })
 
     expect(
       headers.map(h => h.getAttribute('aria-sort'))
@@ -95,6 +141,55 @@ test('VDataTable.vue', () => {
     wrapper.vm.sort(0)
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.defaultPagination.descending).toBe(false)
+
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
+  it('should render a progress with headers slot', () => {
+    const vm = new Vue()
+    const wrapper = mount(Vue.component('test', {
+      components: {
+        VDataTable
+      },
+      render (h) {
+        return h('v-data-table', {
+          props: {
+            items: []
+          },
+          scopedSlots: {
+            headers: props => vm.$createElement('tr')
+          }
+        })
+      }
+    }))
+
+    expect(wrapper.find('.datatable__progress').length).toBe(1)
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
+  it('should only filter on data specified in headers', async () => {
+    const wrapper = mount(VDataTable, dataTableTestDataFilter())
+
+    expect(wrapper.instance().filteredItems.length).toBe(1)
+    wrapper.setProps({
+      search: 'outside'
+    })
+    expect(wrapper.instance().filteredItems.length).toBe(0)
+    wrapper.setProps({
+      search: 'baz'
+    })
+    expect(wrapper.instance().filteredItems.length).toBe(1)
+
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
+  it('should not filter items if search is empty', async () => {
+    const wrapper = mount(VDataTable, dataTableTestDataFilter())
+
+    wrapper.setProps({
+      search: '    '
+    })
+    expect(wrapper.instance().filteredItems.length).toBe(1)
 
     expect('Application is missing <v-app> component.').toHaveBeenTipped()
   })

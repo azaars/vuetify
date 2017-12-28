@@ -10,14 +10,6 @@ import { getObjectValueByPath } from '../../../util/helpers'
 export default {
   methods: {
     genMenu () {
-      const offsetY = this.isAutocomplete || this.offset || this.isDropdown
-      let nudgeTop = 0
-
-      if (this.auto) nudgeTop = -18
-      else if (this.solo) nudgeTop = 0
-      else if (this.isDropdown) nudgeTop = 26
-      else if (offsetY) nudgeTop = 24
-
       const data = {
         ref: 'menu',
         props: {
@@ -28,13 +20,11 @@ export default {
           contentClass: this.computedContentClass,
           disabled: this.disabled,
           maxHeight: this.maxHeight,
-          nudgeTop,
-          offsetY,
+          nudgeTop: this.nudgeTop,
+          offsetY: this.shouldOffset,
           offsetOverflow: this.isAutocomplete,
           openOnClick: false,
-          value: this.menuIsActive &&
-            (!this.tags || this.filteredItems.length > 0) &&
-            (!this.combobox || this.filteredItems.length > 0),
+          value: this.menuIsVisible,
           zIndex: this.menuZIndex
         },
         on: {
@@ -51,6 +41,18 @@ export default {
       this.minWidth && (data.props.minWidth = this.minWidth)
 
       return this.$createElement('v-menu', data, [this.genList()])
+    },
+    getMenuIndex () {
+      return this.$refs.menu ? this.$refs.menu.listIndex : -1
+    },
+    setMenuIndex (index) {
+      this.$refs.menu && (this.$refs.menu.listIndex = index)
+    },
+    resetMenuIndex () {
+      this.setMenuIndex(-1)
+    },
+    isMenuItemSelected () {
+      return this.menuIsActive && this.menuItems.length && this.getMenuIndex() > -1
     },
     genSelectionsAndSearch () {
       return this.$createElement('div', {
@@ -125,7 +127,17 @@ export default {
           // When using the combobox
           // update inputValue and
           // set the menu status
-          data.on.blur = () => {
+          data.on.blur = (e) => {
+            // If user clears input
+            // value will be falsey
+            // but not null
+            if (this.lazySearch == null ||
+              // If blur was caused by clicking
+              // a menu list tile, do nothing
+              (this.content && this.content.contains(e.relatedTarget)) ||
+              (this.$el && this.$el.contains(e.relatedTarget))
+            ) return
+
             this.inputValue = this.lazySearch
           }
         }
@@ -170,7 +182,7 @@ export default {
         if (isDisabled) return
 
         e.stopPropagation()
-        this.focus()
+        this.focusInput()
         this.selectedIndex = index
       }
 
@@ -178,7 +190,7 @@ export default {
         staticClass: 'chip--select-multi',
         attrs: { tabindex: '-1' },
         props: {
-          close: !isDisabled,
+          close: this.deletableChips && !isDisabled,
           dark: this.dark,
           disabled: isDisabled,
           selected: index === this.selectedIndex
@@ -186,7 +198,10 @@ export default {
         on: {
           click: click,
           focus: click,
-          input: () => this.selectItem(item)
+          input: () => {
+            if (this.isMultiple) this.selectItem(item)
+            else this.inputValue = null
+          }
         },
         key: this.getValue(item)
       }, this.getText(item))
@@ -201,7 +216,7 @@ export default {
       }, `${this.getText(item)}${comma ? ', ' : ''}`)
     },
     genList () {
-      const children = this.filteredItems.map(o => {
+      const children = this.menuItems.map(o => {
         if (o.header) return this.genHeader(o)
         if (o.divider) return this.genDivider(o)
         else return this.genTile(o)
@@ -218,6 +233,9 @@ export default {
 
       return this.$createElement('v-card', [
         this.$createElement('v-list', {
+          props: {
+            dense: this.dense
+          },
           ref: 'list'
         }, children)
       ])
@@ -231,6 +249,19 @@ export default {
       return this.$createElement('v-divider', {
         props: item
       })
+    },
+    genLabel () {
+      const singleLine = this.singleLine || this.isDropdown
+
+      if (singleLine && this.isDirty ||
+        singleLine && this.isFocused && this.searchValue
+      ) return null
+
+      const data = {}
+
+      if (this.id) data.attrs = { for: this.id }
+
+      return this.$createElement('label', data, this.$slots.label || this.label)
     },
     genTile (item, disabled) {
       const active = this.selectedItems.indexOf(item) !== -1
@@ -258,6 +289,8 @@ export default {
         data.props.disabled = disabled
       }
 
+      data.props.activeClass = Object.keys(this.addTextColorClassChecks()).join(' ')
+
       if (this.$scopedSlots.item) {
         return this.$createElement('v-list-tile', data,
           [this.$scopedSlots.item({ parent: this, item })]
@@ -269,7 +302,7 @@ export default {
       )
     },
     genAction (item, active) {
-      if (!this.isMultiple) return null
+      if (!this.isMultiple || this.isHidingSelected) return null
 
       const data = {
         staticClass: 'list__tile__action--select-multi',
@@ -282,7 +315,12 @@ export default {
       }
 
       return this.$createElement('v-list-tile-action', data, [
-        this.$createElement('v-checkbox', { props: { inputValue: active } })
+        this.$createElement('v-checkbox', {
+          props: {
+            color: this.computedColor,
+            inputValue: active
+          }
+        })
       ])
     },
     genContent (item) {

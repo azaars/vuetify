@@ -13,15 +13,17 @@ function inserted (el, binding) {
   target.addEventListener('scroll', callback, options)
 
   el._onScroll = {
-    target,
-    options
+    callback,
+    options,
+    target
   }
 }
 
 function unbind (el, binding) {
-  const { target, options } = el._onScroll
+  const { callback, options, target } = el._onScroll
 
-  target.removeEventListener('scroll', binding.callback, options)
+  target.removeEventListener('scroll', callback, options)
+  delete el._onScroll
 }
 
 export default {

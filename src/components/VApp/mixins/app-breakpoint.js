@@ -108,6 +108,10 @@ const breakpoint = {
     }
   },
 
+  created () {
+    this.$vuetify.breakpoint = this.breakpoint
+  },
+
   methods: {
     onResize () {
       this.clientWidth = clientDimensions.getWidth()

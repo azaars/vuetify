@@ -32,7 +32,8 @@ test('VSelect', () => {
       }
     })
 
-    wrapper.vm.focus()
+    wrapper.trigger('focus')
+    await wrapper.vm.$nextTick()
     wrapper.vm.blur()
     await wrapper.vm.$nextTick()
 
@@ -201,6 +202,112 @@ test('VSelect', () => {
 
     wrapper.setProps({ items: [{ text: 'foo', value: 1 }] })
     expect(wrapper.vm.selectedItems).toContainEqual({ text: 'foo', value: 1 })
+
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
+  it('should render select menu with content class', async () => {
+    const items = ['abc']
+
+    const wrapper = mount(VSelect, {
+      propsData: {
+        contentClass: 'menu-class',
+        items
+      }
+    })
+
+    const menu = wrapper.find('.menu__content')[0]
+    expect(menu.element.classList).toContain('menu-class')
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
+  it('should have deletable chips', async () => {
+    const wrapper = mount(VSelect, {
+      attachToDocument: true,
+      propsData: {
+        chips: true,
+        deletableChips: true,
+        tags: true,
+        items: ['foo', 'bar'],
+        value: ['foo']
+      }
+    })
+
+    await wrapper.vm.$nextTick()
+    const chip = wrapper.find('.chip')[0]
+
+    expect(!!chip).toBe(true)
+
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
+  it('should escape items in menu', async () => {
+    const wrapper = mount(VSelect, {
+      propsData: {
+        autocomplete: true,
+        items: ['<strong>foo</strong>']
+      }
+    })
+
+    const tileTitle = wrapper.find('.list__tile__title')[0]
+    expect(tileTitle.html()).toMatchSnapshot()
+
+    wrapper.setProps({ searchInput: 'str' })
+    await wrapper.vm.$nextTick()
+    expect(tileTitle.html()).toMatchSnapshot()
+
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
+  it('should have the proper nudge', async () => {
+    const wrapper = mount(VSelect, {
+      attachToDocument: true,
+      propsData: {
+        hideDetails: true,
+        items: ['foo', 'bar']
+      }
+    })
+
+    expect(wrapper.vm.nudgeTop).toBe(-18)
+
+    wrapper.setProps({ autocomplete: true })
+
+    expect(wrapper.vm.nudgeTop).toBe(0)
+
+    wrapper.setProps({ autocomplete: false, overflow: true })
+
+    expect(wrapper.vm.nudgeTop).toBe(2)
+
+    wrapper.setProps({ auto: true, overflow: false })
+
+    expect(wrapper.vm.nudgeTop).toBe(-18)
+
+    wrapper.setProps({ auto: false, overflow: true, hideDetails: false })
+
+    expect(wrapper.vm.nudgeTop).toBe(26)
+
+    wrapper.setProps({ hideDetails: true })
+
+    expect(wrapper.vm.nudgeTop).toBe(2)
+
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
+  it('should not open if readonly', async () => {
+    const wrapper = mount(VSelect, {
+      propsData: {
+        readonly: true,
+        items: ['foo', 'bar']
+      }
+    })
+
+    wrapper.trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.menuIsActive).toBe(false)
+
+    wrapper.find('.input-group__append-icon')[0].trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.menuIsActive).toBe(false)
 
     expect('Application is missing <v-app> component.').toHaveBeenTipped()
   })

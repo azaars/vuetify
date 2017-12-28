@@ -87,6 +87,8 @@ theme(datatable, "datatable")
         font-size: 12px
 
 .datatable__progress
+  height: auto !important
+
   tr, td, th
     height: auto !important
 
@@ -104,6 +106,9 @@ theme(datatable, "datatable")
   &-col
     padding: 0 !important
     height: 0px !important
+
+    &--expanded
+      border-bottom: 1px solid rgba(0,0,0,0.12)
 
   &-content
     transition: height $primary-transition

@@ -37,13 +37,16 @@ export default {
     fullWidth: Boolean,
     maxWidth: {
       type: [String, Number],
-      default: 290
+      default: 'none'
     },
     origin: {
       type: String,
       default: 'center center'
     },
-    width: [String, Number],
+    width: {
+      type: [String, Number],
+      default: 'auto'
+    },
     scrollable: Boolean,
     transition: {
       type: [String, Boolean],
@@ -83,7 +86,7 @@ export default {
 
   mounted () {
     this.isBooted = this.isActive
-    this.$vuetify.load(this.init)
+    this.isActive && this.show()
   },
 
   beforeDestroy () {
@@ -94,10 +97,9 @@ export default {
     closeConditional (e) {
       // close dialog if !persistent, clicked outside and we're the topmost dialog.
       // Since this should only be called in a capture event (bottom up), we shouldn't need to stop propagation
-      return !this.persistent && getZIndex(this.$refs.content) >= this.getMaxZIndex()
-    },
-    init () {
-      this.isActive && this.show()
+      return !this.persistent &&
+        getZIndex(this.$refs.content) >= this.getMaxZIndex() &&
+        !this.$refs.content.contains(e.target)
     },
     show () {
       !this.fullscreen && !this.hideOverlay && this.genOverlay()
@@ -135,16 +137,9 @@ export default {
     }
 
     if (!this.fullscreen) {
-      let width = this.maxWidth
-
-      if (this.width) {
-        console.log('The {width} property is being deprecated, please use {max-width}.')
-        // TODO: Deprecate
-        width = this.width
-      }
-
       data.style = {
-        maxWidth: isNaN(width) ? width : `${width}px`
+        maxWidth: this.maxWidth === 'none' ? undefined : (isNaN(this.maxWidth) ? this.maxWidth : `${this.maxWidth}px`),
+        width: this.width === 'auto' ? undefined : (isNaN(this.width) ? this.width : `${this.width}px`)
       }
     }
 
@@ -170,6 +165,7 @@ export default {
 
     children.push(h('div', {
       'class': this.contentClasses,
+      domProps: { tabIndex: -1 },
       style: { zIndex: this.activeZIndex },
       ref: 'content'
     }, [dialog]))

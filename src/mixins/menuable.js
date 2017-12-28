@@ -44,7 +44,7 @@ export default {
   props: {
     activator: {
       default: null,
-      validate: val => {
+      validator: val => {
         return ['string', 'object'].includes(typeof val)
       }
     },
@@ -123,7 +123,13 @@ export default {
     calcLeft () {
       const a = this.dimensions.activator
       const c = this.dimensions.content
-      let left = this.left ? a.right - c.width : a.left
+      // Content always has a min width
+      // of its activator. This is applied
+      // when the menu is shown, but not
+      // reflected in the getBoundingClientRect
+      // method
+      const minWidth = a.width < c.width ? c.width : a.width
+      let left = this.left ? a.right - minWidth : a.left
 
       if (this.offsetX) left += this.left ? -a.width : a.width
       if (this.nudgeLeft) left -= this.nudgeLeft
@@ -177,6 +183,7 @@ export default {
       const isOverflowing = toTop < totalHeight
 
       // If overflowing bottom and offset
+      // TODO: set 'bottom' position instead of 'top'
       if (isOverflowing && this.offsetOverflow) {
         top = this.pageYOffset + (activator.top - contentHeight)
       // If overflowing bottom
@@ -260,7 +267,7 @@ export default {
       requestAnimationFrame(() => {
         const el = this.$refs.content
 
-        if (this.isShown(el)) return cb()
+        if (!el || this.isShown(el)) return cb()
 
         el.style.display = 'inline-block'
         cb()
@@ -273,17 +280,10 @@ export default {
     isShown (el) {
       return el.style.display !== 'none'
     },
-    resetDimensions () {
-      this.dimensions = Object.assign({}, dimensions)
-    },
     updateDimensions () {
-      // Ensure that overflow calculation
-      // can work properly every update
-      this.resetDimensions()
-
       const dimensions = {}
 
-      // Activate should already be shown
+      // Activator should already be shown
       dimensions.activator = !this.hasActivator || this.absolute
         ? this.absolutePosition()
         : this.measure(this.getActivator())

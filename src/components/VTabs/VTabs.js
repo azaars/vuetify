@@ -1,6 +1,5 @@
 require('../../stylus/components/_tabs.styl')
 
-import Themeable from '../../mixins/themeable'
 import Resize from '../../directives/resize'
 
 export default {
@@ -9,8 +8,6 @@ export default {
   directives: {
     Resize
   },
-
-  mixins: [Themeable],
 
   provide () {
     return {
@@ -29,17 +26,16 @@ export default {
 
   data () {
     return {
-      content: [],
-      tabItems: [],
       activeIndex: null,
+      content: [],
       isBooted: false,
-      isMobile: false,
       resizeTimeout: null,
       reverse: false,
-      target: null,
-      tabsSlider: null,
-      targetEl: null,
+      tabItems: [],
       tabsContainer: null,
+      tabsSlider: null,
+      target: null,
+      targetEl: null,
       transitionTime: 300
     }
   },
@@ -69,10 +65,11 @@ export default {
         'tabs--grow': this.grow,
         'tabs--icons': this.icons,
         'tabs--mobile': this.isMobile,
-        'tabs--scroll-bars': this.scrollable,
-        'theme--dark': this.dark,
-        'theme--light': this.light
+        'tabs--scroll-bars': this.scrollable
       }
+    },
+    isMobile () {
+      return this.$vuetify.breakpoint.width < this.mobileBreakPoint
     }
   },
 
@@ -85,8 +82,11 @@ export default {
       this.$nextTick(() => (this.isBooted = true))
     },
     tabItems (newItems, oldItems) {
-      // Tab item got removed
-      if (oldItems.length > newItems.length) {
+      // Tab item was removed and
+      // there are still more
+      if (oldItems.length > newItems.length &&
+        newItems.length > 0
+      ) {
         if (!newItems.find(o => o.id === this.target)) {
           const i = oldItems.findIndex(o => o.id === this.target)
 
@@ -107,17 +107,15 @@ export default {
   },
 
   mounted () {
-    this.$vuetify.load(() => {
-      // // This is a workaround to detect if link is active
-      // // when being used as a router or nuxt link
-      const i = this.tabItems.findIndex(({ el }) => {
-        return el.firstChild.classList.contains('tabs__item--active')
-      })
-
-      const tab = this.value || (this.tabItems[i !== -1 ? i : 0] || {}).id
-
-      tab && this.tabClick(tab) && this.onResize()
+    // This is a workaround to detect if link is active
+    // when being used as a router or nuxt link
+    const i = this.tabItems.findIndex(({ el }) => {
+      return el.firstChild.classList.contains('tabs__item--active')
     })
+
+    const tab = this.value || (this.tabItems[i !== -1 ? i : 0] || {}).id
+
+    tab && this.tabClick(tab)
   },
 
   methods: {
@@ -154,14 +152,13 @@ export default {
       this.tabClick(this.tabItems[prevIndex].id)
     },
     onResize () {
-      this.isMobile = window.innerWidth < this.mobileBreakPoint
       this.slider()
     },
     /**
      * When v-navigation-drawer changes the
      * width of the container, call resize
      * after the transition is complete
-     * 
+     *
      * @return {Void}
      */
     onContainerResize () {
@@ -170,10 +167,10 @@ export default {
     },
     slider (el) {
       this.tabsSlider = this.tabsSlider ||
-        this.$el.querySelector('.tabs__slider')
+        !!this.$el && this.$el.querySelector('.tabs__slider')
 
       this.tabsContainer = this.tabsContainer ||
-        this.$el.querySelector('.tabs__container')
+        !!this.$el && this.$el.querySelector('.tabs__container')
 
       if (!this.tabsSlider || !this.tabsContainer) return
 

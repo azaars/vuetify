@@ -12,7 +12,7 @@ export default {
           all: this.all
         })
 
-        children = this.needsTR(row) ? this.genTR(row) : row
+        children = [this.needsTR(row) ? this.genTR(row) : row, this.genTProgress()]
       } else {
         const row = this.headers.map(o => this.genHeader(o))
         const checkbox = this.$createElement('v-checkbox', {
@@ -29,7 +29,7 @@ export default {
 
         this.hasSelectAll && row.unshift(this.$createElement('th', [checkbox]))
 
-        children = this.genTR(row)
+        children = [this.genTR(row), this.genTProgress()]
       }
 
       return this.$createElement('thead', [children])
@@ -49,6 +49,7 @@ export default {
         attrs: {
           role: 'columnheader',
           scope: 'col',
+          width: header.width || null,
           'aria-label': header[this.headerText] || '',
           'aria-sort': 'none'
         }
@@ -78,7 +79,7 @@ export default {
       data.attrs.tabIndex = 0
       data.on = {
         click: () => {
-          this.expanded = []
+          this.expanded = {}
           this.sort(header.value)
         },
         keydown: e => {
@@ -91,7 +92,7 @@ export default {
       }
 
       classes.push('sortable')
-      const icon = this.$createElement('v-icon', { attrs: { 'aria-hidden': true } }, 'arrow_upward')
+      const icon = this.$createElement('v-icon', 'arrow_upward')
       if (header.align && header.align === 'left') {
         children.push(icon)
       } else {

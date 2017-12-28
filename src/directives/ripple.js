@@ -10,13 +10,18 @@ function style (el, value) {
 const RippleDataAttribute = 'data-ripple'
 
 const ripple = {
+  /**
+   * @param {Event} e
+   * @param {Element} el
+   * @param {{ class?: string, center?: boolean }} [value={}]
+   */
   show: (e, el, { value = {} }) => {
     if (el.getAttribute(RippleDataAttribute) !== 'true') {
       return
     }
 
-    var container = document.createElement('span')
-    var animation = document.createElement('span')
+    const container = document.createElement('span')
+    const animation = document.createElement('span')
 
     container.appendChild(animation)
     container.className = 'ripple__container'
@@ -79,8 +84,12 @@ const ripple = {
   }
 }
 
+function isRippleEnabled (binding) {
+  return typeof binding.value === 'undefined' || !!binding.value
+}
+
 function directive (el, binding) {
-  el.setAttribute(RippleDataAttribute, !!binding.value)
+  el.setAttribute(RippleDataAttribute, isRippleEnabled(binding))
 
   if ('ontouchstart' in window) {
     el.addEventListener('touchend', () => ripple.hide(el), false)
@@ -109,7 +118,7 @@ function update (el, binding) {
     return
   }
 
-  el.setAttribute(RippleDataAttribute, !!binding.value)
+  el.setAttribute(RippleDataAttribute, isRippleEnabled(binding))
 }
 
 export default {

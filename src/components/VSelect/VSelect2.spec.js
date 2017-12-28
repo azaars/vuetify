@@ -13,9 +13,11 @@ test('VSelect', () => {
     })
 
     for (const key of ['up', 'down', 'space', 'enter']) {
-      wrapper.vm.focus()
+      wrapper.trigger('focus')
+      await wrapper.vm.$nextTick()
       expect(wrapper.vm.menuIsActive).toBe(false)
       wrapper.trigger(`keydown.${key}`)
+      await wrapper.vm.$nextTick()
       expect(wrapper.vm.menuIsActive).toBe(true)
       wrapper.vm.blur()
       await wrapper.vm.$nextTick()
@@ -71,7 +73,7 @@ test('VSelect', () => {
     clear.trigger('click')
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.inputValue).toBe(null)
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.vm.menuIsVisible).toBe(false)
 
     expect('Application is missing <v-app> component.').toHaveBeenTipped()
   })
@@ -98,7 +100,7 @@ test('VSelect', () => {
     clear.trigger('click')
     await wrapper.vm.$nextTick()
     expect(change).toHaveBeenCalledWith([])
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.vm.menuIsVisible).toBe(false)
 
     expect('Application is missing <v-app> component.').toHaveBeenTipped()
   })
@@ -220,6 +222,50 @@ test('VSelect', () => {
 
     arrow.trigger('click')
     expect(wrapper.vm.menuIsActive).toBe(true)
+
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
+  it('should open menu when cleared with open-on-clear', async () => {
+    const wrapper = mount(VSelect, {
+      propsData: {
+        clearable: true,
+        openOnClear: true,
+        value: 1
+      }
+    })
+
+    const clear = wrapper.find('.input-group__append-icon')[0]
+
+    clear.trigger('click')
+
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.menuIsActive).toBe(true)
+
+    expect('Application is missing <v-app> component.').toHaveBeenTipped()
+  })
+
+  it('should not rotate icon if menu is not open', async () => {
+    const wrapper = mount(VSelect, {
+      propsData: {
+        items: [1]
+      }
+    })
+
+    wrapper.trigger('focus')
+
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.menuIsVisible).toBe(false)
+    expect(wrapper.hasClass('input-group--open')).toBe(false)
+
+    wrapper.trigger('click')
+
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.menuIsVisible).toBe(true)
+    expect(wrapper.hasClass('input-group--open')).toBe(true)
 
     expect('Application is missing <v-app> component.').toHaveBeenTipped()
   })

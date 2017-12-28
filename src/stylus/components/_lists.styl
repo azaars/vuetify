@@ -11,21 +11,23 @@ list($material)
   .list__tile__sub-title
     color: $material.text.secondary
 
-  .subheader
-    color: $material.text.secondary
-
   .divider
     background-color: $material.dividers
 
   .list__tile__mask
     color: $material.text.disabled
 
+  &--group
+    .list__tile--active
+      .list__tile__title
+        color: $material.text.link
+
 theme(list, "list")
 
 .list
   list-style-type: none
   padding: $list-top-padding 0 $list-bottom-padding
-  transition: height .4s $transition.fast-out-slow-in
+  transition: height .3s $transition.fast-out-slow-in
 
   .input-group
     margin: 0
@@ -138,8 +140,6 @@ theme(list, "list")
         justify-content: flex-end
 
     &--active
-      color: $list-tile-active-color
-
       .list__tile__action:first-of-type
         .icon
           color: inherit
@@ -221,13 +221,10 @@ theme(list, "list")
     .list__tile
       padding-left: $list-item-left-padding
 
-    .list__tile--active
-      .list__tile__title
-        color: $theme.primary
-
     &__header
       > li:first-child
         cursor: pointer
+        display: block
 
         &:hover
           background: $material-twelve-percent-dark

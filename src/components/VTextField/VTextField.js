@@ -17,6 +17,7 @@ export default {
     return {
       initialValue: null,
       inputHeight: null,
+      internalChange: false,
       badInput: false,
       lazySelection: 0
     }
@@ -84,12 +85,16 @@ export default {
     },
     inputValue: {
       get () {
-        return this.value
+        return this.lazyValue
       },
       set (val) {
-        this.lazyValue = val
-        this.mask && this.setSelectionRange()
-        this.$emit('input', val)
+        if (this.mask) {
+          this.lazyValue = this.unmaskText(this.maskText(this.unmaskText(val)))
+          this.setSelectionRange()
+        } else {
+          this.lazyValue = val
+          this.$emit('input', this.lazyValue)
+        }
       }
     },
     isDirty () {
@@ -112,8 +117,18 @@ export default {
       }
     },
     value (val) {
-      // Value was changed externally, update lazy
-      this.lazyValue = val
+      if (this.mask && !this.internalChange) {
+        const masked = this.maskText(this.unmaskText(val))
+        this.lazyValue = this.unmaskText(masked)
+
+        // Emit when the externally set value was modified internally
+        String(val) !== this.lazyValue && this.$nextTick(() => {
+          this.$refs.input.value = masked
+          this.$emit('input', this.lazyValue)
+        })
+      } else this.lazyValue = val
+
+      if (this.internalChange) this.internalChange = false
 
       !this.validateOnBlur && this.validate()
       this.shouldAutoGrow && this.calculateInputHeight()
@@ -121,10 +136,8 @@ export default {
   },
 
   mounted () {
-    this.$vuetify.load(() => {
-      this.shouldAutoGrow && this.calculateInputHeight()
-      this.autofocus && this.focus()
-    })
+    this.shouldAutoGrow && this.calculateInputHeight()
+    this.autofocus && this.focus()
   },
 
   methods: {
@@ -141,13 +154,17 @@ export default {
       })
     },
     onInput (e) {
-      this.resetSelections(e.target)
-      this.inputValue = this.unmaskText(e.target.value)
+      this.mask && this.resetSelections(e.target)
+      this.inputValue = e.target.value
       this.badInput = e.target.validity && e.target.validity.badInput
       this.shouldAutoGrow && this.calculateInputHeight()
     },
     blur (e) {
       this.isFocused = false
+      // Reset internalChange state
+      // to allow external change
+      // to persist
+      this.internalChange = false
 
       this.$nextTick(() => {
         this.validate()
@@ -162,6 +179,19 @@ export default {
         this.$refs.input.focus()
       }
       this.$emit('focus', e)
+    },
+    keyDown (e) {
+      // Prevents closing of a
+      // dialog when pressing
+      // enter
+      if (this.multiLine &&
+        this.isFocused &&
+        e.keyCode === 13
+      ) {
+        e.stopPropagation()
+      }
+
+      this.internalChange = true
     },
     genCounter () {
       return this.$createElement('div', {
@@ -193,7 +223,8 @@ export default {
         on: Object.assign(listeners, {
           blur: this.blur,
           input: this.onInput,
-          focus: this.focus
+          focus: this.focus,
+          keydown: this.keyDown
         }),
         ref: 'input'
       }
@@ -231,6 +262,7 @@ export default {
       this.$nextTick(() => this.$refs.input.focus())
     },
     resetSelections (input) {
+      if (!input.selectionEnd) return
       this.selection = input.selectionEnd
       this.lazySelection = 0
 

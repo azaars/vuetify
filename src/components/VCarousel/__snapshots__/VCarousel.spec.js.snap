@@ -5,11 +5,13 @@ exports[`VCarousel.js should render component and match snapshot 1`] = `
 <div class="carousel">
   <div class="carousel__left">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_left
         </i>
       </div>
@@ -17,11 +19,13 @@ exports[`VCarousel.js should render component and match snapshot 1`] = `
   </div>
   <div class="carousel__right">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_right
         </i>
       </div>
@@ -38,11 +42,13 @@ exports[`VCarousel.js should render component with custom duration between image
 <div class="carousel">
   <div class="carousel__left">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_left
         </i>
       </div>
@@ -50,11 +56,13 @@ exports[`VCarousel.js should render component with custom duration between image
   </div>
   <div class="carousel__right">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_right
         </i>
       </div>
@@ -71,11 +79,13 @@ exports[`VCarousel.js should render component with custom icon and match snapsho
 <div class="carousel">
   <div class="carousel__left">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_left
         </i>
       </div>
@@ -83,17 +93,67 @@ exports[`VCarousel.js should render component with custom icon and match snapsho
   </div>
   <div class="carousel__right">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_right
         </i>
       </div>
     </button>
   </div>
   <div class="carousel__controls">
+    <button type="button"
+            class="btn btn--icon theme--dark carousel__controls__item carousel__controls__item--active"
+            data-ripple="true"
+    >
+      <div class="btn__content">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
+          stop
+        </i>
+      </div>
+    </button>
+    <button type="button"
+            class="btn btn--icon theme--dark carousel__controls__item"
+            data-ripple="true"
+    >
+      <div class="btn__content">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
+          stop
+        </i>
+      </div>
+    </button>
+    <button type="button"
+            class="btn btn--icon theme--dark carousel__controls__item"
+            data-ripple="true"
+    >
+      <div class="btn__content">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
+          stop
+        </i>
+      </div>
+    </button>
+  </div>
+  <div class="carousel__item tab-transition-enter tab-transition-enter-active"
+       style="background-image: url(1);"
+  >
+  </div>
+  <div class="carousel__item"
+       style="background-image: url(2); display: none;"
+  >
+  </div>
+  <div class="carousel__item"
+       style="background-image: url(3); display: none;"
+  >
   </div>
 </div>
 
@@ -104,11 +164,13 @@ exports[`VCarousel.js should render component with custom left control icon and 
 <div class="carousel">
   <div class="carousel__left">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           stop
         </i>
       </div>
@@ -116,11 +178,13 @@ exports[`VCarousel.js should render component with custom left control icon and 
   </div>
   <div class="carousel__right">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_right
         </i>
       </div>
@@ -137,11 +201,13 @@ exports[`VCarousel.js should render component with custom right control icon and
 <div class="carousel">
   <div class="carousel__left">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_left
         </i>
       </div>
@@ -149,11 +215,13 @@ exports[`VCarousel.js should render component with custom right control icon and
   </div>
   <div class="carousel__right">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           stop
         </i>
       </div>
@@ -170,11 +238,13 @@ exports[`VCarousel.js should render component with image cycling off and match s
 <div class="carousel">
   <div class="carousel__left">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_left
         </i>
       </div>
@@ -182,11 +252,13 @@ exports[`VCarousel.js should render component with image cycling off and match s
   </div>
   <div class="carousel__right">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_right
         </i>
       </div>
@@ -203,11 +275,13 @@ exports[`VCarousel.js should render component with selected active item 1`] = `
 <div class="carousel">
   <div class="carousel__left">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_left
         </i>
       </div>
@@ -215,11 +289,13 @@ exports[`VCarousel.js should render component with selected active item 1`] = `
   </div>
   <div class="carousel__right">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_right
         </i>
       </div>
@@ -227,31 +303,37 @@ exports[`VCarousel.js should render component with selected active item 1`] = `
   </div>
   <div class="carousel__controls">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark carousel__controls__item"
+            class="btn btn--icon theme--dark carousel__controls__item"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           fiber_manual_record
         </i>
       </div>
     </button>
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark carousel__controls__item carousel__controls__item--active"
+            class="btn btn--icon theme--dark carousel__controls__item carousel__controls__item--active"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           fiber_manual_record
         </i>
       </div>
     </button>
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark carousel__controls__item"
+            class="btn btn--icon theme--dark carousel__controls__item"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           fiber_manual_record
         </i>
       </div>
@@ -273,16 +355,65 @@ exports[`VCarousel.js should render component with selected active item 1`] = `
 
 `;
 
+exports[`VCarousel.js should render component without delimiters 1`] = `
+
+<div class="carousel">
+  <div class="carousel__left">
+    <button type="button"
+            class="btn btn--icon theme--dark"
+            data-ripple="true"
+    >
+      <div class="btn__content">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
+          chevron_left
+        </i>
+      </div>
+    </button>
+  </div>
+  <div class="carousel__right">
+    <button type="button"
+            class="btn btn--icon theme--dark"
+            data-ripple="true"
+    >
+      <div class="btn__content">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
+          chevron_right
+        </i>
+      </div>
+    </button>
+  </div>
+  <div class="carousel__item tab-transition-enter tab-transition-enter-active"
+       style="background-image: url(1);"
+  >
+  </div>
+  <div class="carousel__item"
+       style="background-image: url(2); display: none;"
+  >
+  </div>
+  <div class="carousel__item"
+       style="background-image: url(3); display: none;"
+  >
+  </div>
+</div>
+
+`;
+
 exports[`VCarousel.js should render component without left control icon and match snapshot 1`] = `
 
 <div class="carousel">
   <div class="carousel__right">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_right
         </i>
       </div>
@@ -299,11 +430,13 @@ exports[`VCarousel.js should render component without right control icon and mat
 <div class="carousel">
   <div class="carousel__left">
     <button type="button"
-            class="btn btn--icon btn--raised theme--dark"
+            class="btn btn--icon theme--dark"
             data-ripple="true"
     >
       <div class="btn__content">
-        <i class="material-icons icon">
+        <i aria-hidden="true"
+           class="material-icons icon"
+        >
           chevron_left
         </i>
       </div>

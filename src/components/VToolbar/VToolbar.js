@@ -16,9 +16,6 @@ export default {
       desktop: 64,
       dense: 48
     },
-    denseHeight: 48,
-    defaultHeight: 56,
-    prominentHeight: 64,
     isExtended: false,
     isScrollingProxy: false,
     marginTop: 0,
@@ -54,16 +51,20 @@ export default {
     computedHeight () {
       if (this.height) return parseInt(this.height)
       if (this.dense) return this.heights.dense
+
       if (this.prominent ||
         this.$vuetify.breakpoint.mdAndUp
       ) return this.heights.desktop
+
       if (this.$vuetify.breakpoint.width >
         this.$vuetify.breakpoint.height
-      ) return this.mobileLandscape
+      ) return this.heights.mobileLandscape
 
       return this.heights.mobile
     },
     computedMarginTop () {
+      if (!this.app) return this.marginTop
+
       return this.marginTop + this.$vuetify.application.bar
     },
     classes () {
@@ -103,15 +104,26 @@ export default {
       return this.$vuetify.application.right
     },
     styles () {
-      return this.app && {
-        marginTop: `${this.computedMarginTop}px`,
-        paddingLeft: `${this.paddingLeft}px`,
-        paddingRight: `${this.paddingRight}px`
+      const style = {
+        marginTop: `${this.computedMarginTop}px`
       }
+
+      if (this.app) {
+        style.paddingRight = `${this.paddingRight}px`
+        style.paddingLeft = `${this.paddingLeft}px`
+      }
+
+      return style
     }
   },
 
   watch: {
+    clippedLeft (val) {
+      this.updateApplication()
+    },
+    clippedRight (val) {
+      this.updateApplication()
+    },
     isScrolling (val) {
       this.whenScrolled(val)
     }

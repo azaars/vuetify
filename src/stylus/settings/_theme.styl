@@ -6,16 +6,6 @@ $body-font-family := 'Roboto', sans-serif
 $font-size-root := 14px
 $line-height-root := 1.5
 
-$theme := {
-  primary: $blue.darken-2
-  accent: $blue.accent-1
-  secondary: $grey.darken-3
-  info: $blue.base
-  warning: $amber.base
-  error: $red.accent-2
-  success: $green.base
-}
-
 // Material Design - https://material.io/guidelines/style/color.html#color-usability
 // ============================================================
 $material-light := {
@@ -36,7 +26,7 @@ $material-light := {
     primary: rgba(#000, .87),
     secondary: rgba(#000, .54),
     disabled: rgba(#000, .38),
-    link: $theme.primary,
+    link: $blue.darken-2,
     link-hover: $grey.darken-3
   },
   icons: {
@@ -53,7 +43,6 @@ $material-light := {
     focus: #EEEEEE
   },
   selection-controls: {
-    active: $teal.base,
     thumb: {
       inactive: $grey.lighten-5,
       disabled: $grey.lighten-1
@@ -70,8 +59,7 @@ $material-light := {
     discrete: #000
   },
   tabs: {
-    active: $theme.primary,
-    inactive: rgba(#000, .70)
+    active: rgba(#000, .87)
   },
   input-bottom-line: rgba(#000, .42),
   stepper: {
@@ -84,11 +72,9 @@ $material-light := {
     hover: $grey.lighten-3
   },
   picker: {
-    buttons: #fff,
-    date: $theme.primary,
-    title: $theme.primary,
     body: #fff,
-    clock: $grey.lighten-2
+    clock: $grey.lighten-2,
+    title: $grey.lighten-2
   },
   bg-color: #fff
   fg-color: #000
@@ -119,7 +105,7 @@ $material-dark := {
     primary: #fff,
     secondary: rgba(#fff, .70),
     disabled: rgba(#fff, .50),
-    link: $theme.accent,
+    link: $blue.accent-1,
     link-hover: $grey.lighten-3
   },
   icons: {
@@ -136,7 +122,6 @@ $material-dark := {
     focus: rgba(#000, .70)
   },
   selection-controls: {
-    active: $teal.lighten-3,
     thumb: {
       inactive: $grey.lighten-1,
       disabled: $grey.darken-3
@@ -153,8 +138,7 @@ $material-dark := {
     discrete: #fff
   },
   tabs: {
-    active: #fff,
-    inactive: rgba(#fff, .7)
+    active: #fff
   },
   input-bottom-line: rgba(#fff, .7),
 
@@ -168,11 +152,9 @@ $material-dark := {
     hover: $grey.darken-2
   },
   picker: {
-    date: $theme.accent,
-    title: $grey.darken-2,
     body: #424242,
     clock: $grey.darken-2,
-    buttons: rgba(#000, .87)
+    title: $grey.darken-2
   },
   bg-color: #303030
   fg-color: #fff
